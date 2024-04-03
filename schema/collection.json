@@ -10,7 +10,7 @@
       "type": "string",
       "format": "uri-reference",
       "x-go-name": "HyperionId",
-      "description": "The relative URI through which this response was generated"
+      "description": "The relative URI through which this response was generated."
     },
     "@type": {
       "type": "string",
@@ -24,12 +24,12 @@
     "@links": {
       "$ref": "./collection-links.json",
       "x-go-name": "HyperionLinks",
-      "description": "A collection of links related to this collection"
+      "description": "A collection of links related to this collection."
     },
     "total_items": {
       "type": "integer",
       "readOnly": true,
-      "description": "The total number of items in this collection"
+      "description": "The total number of items in this collection."
     }
   },
   "required": [

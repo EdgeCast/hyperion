@@ -34,7 +34,7 @@
     "description": {
       "type": "string",
       "minLength": 1,
-      "description": "Detailed error description"
+      "description": "Detailed error description."
     }
   },
   "required": [

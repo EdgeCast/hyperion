@@ -40,14 +40,14 @@
         "service_unavailable",
         "gateway_timeout"
       ],
-      "description": "Error code",
+      "description": "Error code.",
       "pattern": "^[a-z][a-z_]*[a-z]$"
     },
     "status_code": {
       "type": "integer",
       "minimum": 100,
       "maximum": 599,
-      "description": "The response's HTTP status code"
+      "description": "The response's HTTP status code."
     },
     "title": {
       "type": "string",
@@ -56,10 +56,10 @@
     },
     "description": {
       "type": "string",
-      "description": "Detailed error description"
+      "description": "Detailed error description."
     },
     "details": {
-      "description": "Array of error detail",
+      "description": "Array of error detail.",
       "type": "array",
       "items": {
         "$ref": "./error-detail.json"

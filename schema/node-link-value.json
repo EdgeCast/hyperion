@@ -9,7 +9,7 @@
     "href": {
       "type": "string",
       "format": "uri-reference",
-      "description": "A relative URL path"
+      "description": "The relative URL path."
     },
     "description": {
       "type": "string",

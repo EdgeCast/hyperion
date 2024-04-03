@@ -5,7 +5,7 @@
     "x-additionalPropertiesName": "hypermedia_link",
     "$ref": "./node-link-value.json"
   },
-  "description": "Reserved for hypermedia links that might be provided in the future.",
+  "description": "Represents hypermedia link(s) related to the resource.",
   "x-tags": [
     "hyperion"
   ],
