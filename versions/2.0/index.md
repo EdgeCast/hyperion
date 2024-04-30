@@ -32,11 +32,12 @@ Anywhere a **URI** is specified, it must adhere to the following rules:
 * **MUST** use `-` or hyphen as delimiter for words within the path.
 * **MUST** use `snake_case` for query string parameters.
 * **MUST NOT** have file extensions.
-* **SHOULD** use lowercase characters for words within the path basename (up to the last occurrence of '/').  This is to account for various-case `id`s, such as those found in URL shorteners. E.g. `https://goo.gl/VwUrzz`
+* **SHOULD** use lowercase characters for [resource paths](#conventions-resource-paths) such as collection or singletons. Exceptions can be made for singleton resources that are unique. 
+    * `https://api.company.com/security/v1/policies/VwUrzz`
 
 ### <a href="#conventions-sub-service" id="urls" class="headerlink"></a> Sub-service Path
 
-APIs **MUST** provide a sub-service path in the URI as a way to create a namespace for your endpoints.
+APIs **MUST** provide a sub-service path in the [URI](#conventions-uri) as a way to create a namespace for your endpoints.
 
 A `sub-service` URI path **MUST** have the following:
 
@@ -67,27 +68,29 @@ https://api.company.com/sub-service/v1.1
 
 ### <a href="#conventions-resource-paths" id="conventions-resource-paths" class="headerlink"></a> Resource Paths
 
-A resource path or `resource`, is the primary representation of data within a RESTful API. 
+A resource path represents data a client can consume and interact with.
 
-* All resources **MUST** be a noun.
-* All collection type resource **MUST** be named using plural form.
-* All singleton resources **MUST** be named using singular form.
-* Resources **MAY** have sub-collections, however API developers must avoid deeply nesting.
-* Paths **MUST** represent a valid resource.
-* Paths **MUST NOT** be used for filtering or anchoring.
+Resource paths must adhere to the following rules:
+
+* **MUST** be named a noun.
+* **MAY** have sub-collections, however API developers must avoid deeply nesting resources.
+* **MUST** represent a valid resource.
+* **MUST NOT** be used for filtering or anchoring.
+* **MUST** use plural form for collections.
+* **MUST** singular form for singletons.
+
 
 An example of a `collection` type resource are the following:
-
 ```
 https://api.company.com/security/v1/configs
 https://api.company.com/security/v1/policies
 ```
 
 An example of a `singleton` type resource are the following:
-
 ```
 https://api.company.com/security/v1/global-policy
-https://api.company.com/security/v1/policies/1
+https://api.company.com/security/v1/policies/VwUrzz
+https://api.company.com/iam/v1/users/a683057f-0eef-49bd-801e-5958cdbabd50
 ```
 
 ### <a href="#conventions-pagination" id="conventions-pagination" class="headerlink"></a> Pagination
@@ -101,6 +104,7 @@ APIs **MUST** use the following query parameters for pagination and sorting:
 
 APIs **SHOULD** set the default size of a collection to `25` items.
 
+An example of pagination query parameters:
 ```
 https://api.company.com/security/v1/configs?offset=5&limit=100
 https://api.company.com/security/v1/policies?offset=25&limit=25
@@ -108,7 +112,7 @@ https://api.company.com/security/v1/policies?offset=25&limit=25
 
 ### <a href="#conventions-http-status-codes" id="conventions-http-status-codes" class="headerlink"></a> HTTP Status Codes
 
-APIs **MUST** respond to requests with an Http Status Code that is found in the following list:
+APIs **MUST** respond to requests with an HTTP Status Code that is found in the following list:
 
 status code | description | [error code](#document-components-error-codes) | notes
 --- | --- | --- | ---
@@ -125,7 +129,7 @@ status code | description | [error code](#document-components-error-codes) | not
 401 | Unauthorized | unauthorized | The request did not include a required authentication component
 403 | Forbidden | forbidden | The request has failed authorization checks
 404 | Not found | not_found | Resource not found
-405 | Method not allowed | method_not_allowed | The http method was not valid at the specified URI
+405 | Method not allowed | method_not_allowed | The HTTP method was not valid at the specified URI
 409 | Conflict | invalid_operation | The request could not be completed due to a conflict with the current state of the target resource
 413 | Payload Too Large | payload_too_large | Request payload is too large and the server will not process it
 422 | Unprocessable Entity | The request and it's body are valid and parseable, but are malformed in a semantic way (missing data, incorrect structure)
