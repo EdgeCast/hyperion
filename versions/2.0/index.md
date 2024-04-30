@@ -90,6 +90,21 @@ https://api.company.com/security/v1/global-policy
 https://api.company.com/security/v1/policies/1
 ```
 
+### <a href="#conventions-pagination" id="conventions-pagination" class="headerlink"></a> Pagination
+
+An API **MAY** provide pagination on collection [resources](#conventions-resource-paths).
+
+APIs **MUST** use the following query parameters for pagination and sorting:
+
+* `limit`: The number of items to return within the collection.
+* `offset`: The offset from which to start pagination.
+
+APIs **SHOULD** set the default size of a collection to `25` items.
+
+```
+https://api.company.com/security/v1/configs?offset=5&limit=100
+https://api.company.com/security/v1/policies?offset=25&limit=25
+```
 
 ### <a href="#conventions-http-status-codes" id="conventions-http-status-codes" class="headerlink"></a> HTTP Status Codes
 
@@ -376,20 +391,20 @@ A `Collection` **MAY** have the following:
 
 ```json
 {
-    "@id": "/users?page=2&page_size=4",
+    "@id": "/users?offset=5&limit=4",
     "@type": "Collection",
     "@links": {
         "first": {
-            "href": "/users?page=1&page_size=4"
+            "href": "/users?offset=0&limit=4"
         },
         "next": {
-            "href": "/users?page=3&page_size=4"
+            "href": "/users?offset=10&limit=4"
         },
         "previous": {
-            "href": "/users?page=1&page_size=4"
+            "href": "/users?offset=0&limit=4"
         },
         "last": {
-            "href": "/users?page=5&page_size=4"
+            "href": "/users?offset=14&limit=4"
         }
     },
     "items": [
@@ -418,17 +433,17 @@ An example of a `collection` where the `items` are _not Hyperion_ :
     "@id": "/users?page=2&page_size=4",
     "@type": "Collection",
     "@links": {
-        "first": {
-            "href": "/users?page=1&page_size=4"
+       "first": {
+            "href": "/users?offset=0&limit=4"
         },
         "next": {
-            "href": "/users?page=3&page_size=4"
+            "href": "/users?offset=10&limit=4"
         },
         "previous": {
-            "href": "/users?page=1&page_size=4"
+            "href": "/users?offset=0&limit=4"
         },
         "last": {
-            "href": "/users?page=5&page_size=4"
+            "href": "/users?offset=14&limit=4"
         }
     },
     "items": [
