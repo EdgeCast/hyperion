@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Version - 1.0"
-version: 1.0
+title: "Version - 2.0"
+version: 2.0
 ---
 
 # <a href="#introduction" id="introduction" class="headerlink"></a> Introduction
@@ -31,11 +31,13 @@ Anywhere a **URI** is specified, it must adhere to the following rules:
 * **MUST** be relative path as it's sometimes difficult for servers to construct an absolute path reliably.
 * **MUST** use `-` or hyphen as delimiter for words within the path.
 * **MUST** use `snake_case` for query string parameters.
-* **SHOULD** use lowercase characters for words within the path basename (up to the last occurrence of '/').  This is to account for various-case `id`s, such as those found in URL shorteners. E.g. `https://goo.gl/VwUrzz`
+* **MUST NOT** have file extensions.
+* **SHOULD** use lowercase characters for [resource paths](#conventions-resource-paths) such as collection or singletons. Exceptions can be made for singleton resources that are unique. 
+    * `https://api.company.com/security/v1/policies/VwUrzz`
 
 ### <a href="#conventions-sub-service" id="urls" class="headerlink"></a> Sub-service Path
 
-APIs **MUST** provide a sub-service path in the URI as a way to create a namespace for your endpoints.
+APIs **MUST** provide a sub-service path in the [URI](#conventions-uri) as a way to create a namespace for your endpoints.
 
 A `sub-service` URI path **MUST** have the following:
 
@@ -43,36 +45,6 @@ A `sub-service` URI path **MUST** have the following:
 * Provide support for [versioning](#conventions-versioning). `https://api.company.com/`**`sub-service`**`/v`**`Major[.Minor]`**`/`
 
 These two rules promote clear differentiation of sub-services and versions, allowing independent development.
-
-### <a href="#conventions-http-status-codes" id="conventions-http-status-codes" class="headerlink"></a> HTTP Status Codes
-
-APIs **MUST** respond to requests with an Http Status Code that is found in the following list:
-
-status code | description | [error code](#document-components-error-codes) | notes
---- | --- | --- | ---
-200 | OK | | The request has successfully completed processing
-201 | Created | | Resource has been created and processed successfully
-202 | Accepted | | The request has been accepted for processing, but the processing has not been completed.
-204 | No content | | (for deletions only) The deletion process has completed
-301 | Moved Permanently | Redirect requests permanently, and allow for changing method
-303 | See Other | Redirect requests temporarily, and allow for changing method
-304 | Not Modified | Implicit redirection to client's cache
-307 | Temporary Redirect | Redirect requests temporarily, and do not allow changing method
-308 | Permanent Redirect | Redirect requests permanently, and do not allow changing method
-400 | Bad Request | invalid_input | The request has one or more errors and cannot be processed
-401 | Unauthorized | unauthorized | The request did not include a required authentication component
-403 | Forbidden | forbidden | The request has failed authorization checks
-404 | Not found | not_found | Resource not found
-405 | Method not allowed | method_not_allowed | The http method was not valid at the specified URI
-409 | Conflict | invalid_operation | The request could not be completed due to a conflict with the current state of the target resource
-413 | Payload Too Large | payload_too_large | Request payload is too large and the server will not process it
-422 | Unprocessable Entity | The request and it's body are valid and parseable, but are malformed in a semantic way (missing data, incorrect structure)
-429 | Too many Requests | rate_limit_reached | Too many requests have been received in a given amount of time
-500 | Internal server error | internal_error | The server cannot process the request for an unknown reason
-502 | Bad gateway | bad_gateway | The gateway server or proxy received an invalid response from upstream server while fulfilling a request
-503 | Service Unavailable | service_unavailable | The server is currently unable to handle requests temporarily due to maintenance or resource exhaustion from high load
-504 | Gateway timeout | gateway_timeout | The gateway server or proxy failed to receive a response from upstream server while fulfilling a request
-
 
 ### <a href="#conventions-versioning" id="urls" class="headerlink"></a> Versioning 
 
@@ -89,19 +61,93 @@ APIs **MUST** provide versioning in the URI path, following the sub-service path
     * Changing the resource, ie. removing or renaming fields
     * Anything that would violate the [Principal of Least Astonishment](https://en.wikipedia.org/wiki/Principle_of_least_astonishment)
 
+```
+https://api.company.com/sub-service/v1
+https://api.company.com/sub-service/v1.1
+```
 
-`https://api.company.com/sub-service/v1`
+### <a href="#conventions-resource-paths" id="conventions-resource-paths" class="headerlink"></a> Resource Paths
 
-`https://api.company.com/sub-service/v1.1`
+A resource path represents data a client can consume and interact with.
 
-## <a href="#conventions-casing" id="conventions-casing" class="headerlink"></a> Naming Conventions
+Resource paths must adhere to the following rules:
+
+* **MUST** be named a noun.
+* **MAY** have sub-collections, however API developers must avoid deeply nesting resources.
+* **MUST** represent a valid resource.
+* **MUST NOT** be used for filtering or anchoring.
+* **MUST** use plural form for collections.
+* **MUST** singular form for singletons.
+
+
+An example of a `collection` type resource are the following:
+```
+https://api.company.com/security/v1/configs
+https://api.company.com/security/v1/policies
+```
+
+An example of a `singleton` type resource are the following:
+```
+https://api.company.com/security/v1/global-policy
+https://api.company.com/security/v1/policies/VwUrzz
+https://api.company.com/iam/v1/users/a683057f-0eef-49bd-801e-5958cdbabd50
+```
+
+### <a href="#conventions-pagination" id="conventions-pagination" class="headerlink"></a> Pagination
+
+An API **MAY** provide pagination on collection [resources](#conventions-resource-paths).
+
+APIs **MUST** use the following query parameters for pagination and sorting:
+
+* `limit`: The number of items to return within the collection.
+* `offset`: The offset from which to start pagination.
+
+APIs **SHOULD** set the default size of a collection to `25` items.
+
+An example of pagination query parameters:
+```
+https://api.company.com/security/v1/configs?offset=5&limit=100
+https://api.company.com/security/v1/policies?offset=25&limit=25
+```
+
+### <a href="#conventions-http-status-codes" id="conventions-http-status-codes" class="headerlink"></a> HTTP Status Codes
+
+APIs **MUST** respond to requests with an HTTP Status Code that is found in the following list:
+
+status code | description | [error code](#document-components-error-codes) | notes
+--- | --- | --- | ---
+200 | OK | | The request has successfully completed processing
+201 | Created | | Resource has been created and processed successfully
+202 | Accepted | | The request has been accepted for processing, but the processing has not been completed.
+204 | No content | | (for deletions only) The deletion process has completed
+301 | Moved Permanently | Redirect requests permanently, and allow for changing method
+303 | See Other | Redirect requests temporarily, and allow for changing method
+304 | Not Modified | Implicit redirection to client's cache
+307 | Temporary Redirect | Redirect requests temporarily, and do not allow changing method
+308 | Permanent Redirect | Redirect requests permanently, and do not allow changing method
+400 | Bad Request | invalid_input | The request has one or more errors and cannot be processed
+401 | Unauthorized | unauthorized | The request did not include a required authentication component
+403 | Forbidden | forbidden | The request has failed authorization checks
+404 | Not found | not_found | Resource not found
+405 | Method not allowed | method_not_allowed | The HTTP method was not valid at the specified URI
+409 | Conflict | invalid_operation | The request could not be completed due to a conflict with the current state of the target resource
+413 | Payload Too Large | payload_too_large | Request payload is too large and the server will not process it
+422 | Unprocessable Entity | The request and it's body are valid and parseable, but are malformed in a semantic way (missing data, incorrect structure)
+429 | Too many Requests | rate_limit_reached | Too many requests have been received in a given amount of time
+500 | Internal server error | internal_error | The server cannot process the request for an unknown reason
+502 | Bad gateway | bad_gateway | The gateway server or proxy received an invalid response from upstream server while fulfilling a request
+503 | Service Unavailable | service_unavailable | The server is currently unable to handle requests temporarily due to maintenance or resource exhaustion from high load
+504 | Gateway timeout | gateway_timeout | The gateway server or proxy failed to receive a response from upstream server while fulfilling a request
+
+
+### <a href="#conventions-casing" id="conventions-casing" class="headerlink"></a> Naming Conventions
 
 * **MUST** use `PascalCase` and be singular to represent a `@type`.
 * **MUST** use `snake_case` to represent a property.
 * **MUST NOT** use `@` keyword for custom properties as it is reserved.
 
 
-## <a href="#date" id="date" class="headerlink"></a> Date Handling
+### <a href="#conventions-date" id="conventions-date" class="headerlink"></a> Date Handling
 
 All dates **MUST** be represented as string values following the [ISO 8601](https://www.w3.org/TR/NOTE-datetime) standard.
 
@@ -136,7 +182,7 @@ An example of UTC _datetime_ value.
 }
 ```
 
-## <a href="#time-series" id="time-series" class="headerlink"></a> Time Series
+### <a href="#conventions-time-series" id="conventions-time-series" class="headerlink"></a> Time Series
 
 APIs that need to implement time series functionality **MUST** refer to specifications defined in the [time series]({{site.url}}/versions/{{site.latest_version}}/time-series) section.
 
@@ -349,20 +395,20 @@ A `Collection` **MAY** have the following:
 
 ```json
 {
-    "@id": "/users?page=2&page_size=4",
+    "@id": "/users?offset=5&limit=4",
     "@type": "Collection",
     "@links": {
         "first": {
-            "href": "/users?page=1&page_size=4"
+            "href": "/users?offset=0&limit=4"
         },
         "next": {
-            "href": "/users?page=3&page_size=4"
+            "href": "/users?offset=10&limit=4"
         },
         "previous": {
-            "href": "/users?page=1&page_size=4"
+            "href": "/users?offset=0&limit=4"
         },
         "last": {
-            "href": "/users?page=5&page_size=4"
+            "href": "/users?offset=14&limit=4"
         }
     },
     "items": [
@@ -391,17 +437,17 @@ An example of a `collection` where the `items` are _not Hyperion_ :
     "@id": "/users?page=2&page_size=4",
     "@type": "Collection",
     "@links": {
-        "first": {
-            "href": "/users?page=1&page_size=4"
+       "first": {
+            "href": "/users?offset=0&limit=4"
         },
         "next": {
-            "href": "/users?page=3&page_size=4"
+            "href": "/users?offset=10&limit=4"
         },
         "previous": {
-            "href": "/users?page=1&page_size=4"
+            "href": "/users?offset=0&limit=4"
         },
         "last": {
-            "href": "/users?page=5&page_size=4"
+            "href": "/users?offset=14&limit=4"
         }
     },
     "items": [
