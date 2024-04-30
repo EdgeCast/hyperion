@@ -1,7 +1,6 @@
 ---
 layout: default
 title: "Time Series"
-version: 1.0
 ---
 
 # <a href="#time-series-introduction" id="time-series-introduction" class="headerlink"></a> Time Series Introduction

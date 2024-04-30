@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Version - 1.0"
-version: 1.0
+title: "Version - 2.0"
+version: 2.0
 ---
 
 # <a href="#introduction" id="introduction" class="headerlink"></a> Introduction
@@ -31,6 +31,7 @@ Anywhere a **URI** is specified, it must adhere to the following rules:
 * **MUST** be relative path as it's sometimes difficult for servers to construct an absolute path reliably.
 * **MUST** use `-` or hyphen as delimiter for words within the path.
 * **MUST** use `snake_case` for query string parameters.
+* **MUST NOT** have file extensions.
 * **SHOULD** use lowercase characters for words within the path basename (up to the last occurrence of '/').  This is to account for various-case `id`s, such as those found in URL shorteners. E.g. `https://goo.gl/VwUrzz`
 
 ### <a href="#conventions-sub-service" id="urls" class="headerlink"></a> Sub-service Path
@@ -43,6 +44,52 @@ A `sub-service` URI path **MUST** have the following:
 * Provide support for [versioning](#conventions-versioning). `https://api.company.com/`**`sub-service`**`/v`**`Major[.Minor]`**`/`
 
 These two rules promote clear differentiation of sub-services and versions, allowing independent development.
+
+### <a href="#conventions-versioning" id="urls" class="headerlink"></a> Versioning 
+
+APIs **MUST** provide versioning in the URI path, following the sub-service path.
+
+**MUST** increase either `Major` or `Minor` in the version path whenever a breaking change is introduced. `/vMajor[.Minor]`
+    
+* **SHOULD NOT** increase version if adding new endpoints or fields.
+
+* **SHOULD** increase version if changing behavior for an existing API endpoint:
+
+    * Such as modifying the HTTP status code
+    * Changing data format
+    * Changing the resource, ie. removing or renaming fields
+    * Anything that would violate the [Principal of Least Astonishment](https://en.wikipedia.org/wiki/Principle_of_least_astonishment)
+
+```
+https://api.company.com/sub-service/v1
+https://api.company.com/sub-service/v1.1
+```
+
+### <a href="#conventions-resource-paths" id="conventions-resource-paths" class="headerlink"></a> Resource Paths
+
+A resource path or `resource`, is the primary representation of data within a RESTful API. 
+
+* All resources **MUST** be a noun.
+* All collection type resource **MUST** be named using plural form.
+* All singleton resources **MUST** be named using singular form.
+* Resources **MAY** have sub-collections, however API developers must avoid deeply nesting.
+* Paths **MUST** represent a valid resource.
+* Paths **MUST NOT** be used for filtering or anchoring.
+
+An example of a `collection` type resource are the following:
+
+```
+https://api.company.com/security/v1/configs
+https://api.company.com/security/v1/policies
+```
+
+An example of a `singleton` type resource are the following:
+
+```
+https://api.company.com/security/v1/global-policy
+https://api.company.com/security/v1/policies/1
+```
+
 
 ### <a href="#conventions-http-status-codes" id="conventions-http-status-codes" class="headerlink"></a> HTTP Status Codes
 
@@ -74,34 +121,14 @@ status code | description | [error code](#document-components-error-codes) | not
 504 | Gateway timeout | gateway_timeout | The gateway server or proxy failed to receive a response from upstream server while fulfilling a request
 
 
-### <a href="#conventions-versioning" id="urls" class="headerlink"></a> Versioning 
-
-APIs **MUST** provide versioning in the URI path, following the sub-service path.
-
-**MUST** increase either `Major` or `Minor` in the version path whenever a breaking change is introduced. `/vMajor[.Minor]`
-    
-* **SHOULD NOT** increase version if adding new endpoints or fields.
-
-* **SHOULD** increase version if changing behavior for an existing API endpoint:
-
-    * Such as modifying the HTTP status code
-    * Changing data format
-    * Changing the resource, ie. removing or renaming fields
-    * Anything that would violate the [Principal of Least Astonishment](https://en.wikipedia.org/wiki/Principle_of_least_astonishment)
-
-
-`https://api.company.com/sub-service/v1`
-
-`https://api.company.com/sub-service/v1.1`
-
-## <a href="#conventions-casing" id="conventions-casing" class="headerlink"></a> Naming Conventions
+### <a href="#conventions-casing" id="conventions-casing" class="headerlink"></a> Naming Conventions
 
 * **MUST** use `PascalCase` and be singular to represent a `@type`.
 * **MUST** use `snake_case` to represent a property.
 * **MUST NOT** use `@` keyword for custom properties as it is reserved.
 
 
-## <a href="#date" id="date" class="headerlink"></a> Date Handling
+### <a href="#conventions-date" id="conventions-date" class="headerlink"></a> Date Handling
 
 All dates **MUST** be represented as string values following the [ISO 8601](https://www.w3.org/TR/NOTE-datetime) standard.
 
@@ -136,7 +163,7 @@ An example of UTC _datetime_ value.
 }
 ```
 
-## <a href="#time-series" id="time-series" class="headerlink"></a> Time Series
+### <a href="#conventions-time-series" id="conventions-time-series" class="headerlink"></a> Time Series
 
 APIs that need to implement time series functionality **MUST** refer to specifications defined in the [time series]({{site.url}}/versions/{{site.latest_version}}/time-series) section.
 
